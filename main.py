@@ -12,9 +12,8 @@ from tqdm import trange, tqdm
 import time
 import logging
 
-# python -u /data2/fht/invasive/code/main.py
-# nohup python -u main.py > main.log &
-# tail -f main.log
+
+
 
 # Initialize the parser and logging
 parser = argparse.ArgumentParser(description='PyTorch Spiking Neural Network')
@@ -24,12 +23,11 @@ parser.add_argument('--epoch', type=int, default=300, help='Number of epochs')
 parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
 parser.add_argument('--trial_num', type=int, default=5, help='Number of repeated experiments')
 parser.add_argument('--seed', type=int, default=2024, help='whether EA')
-parser.add_argument('--loo', type=bool, default=False, help='cross subject')
+parser.add_argument('--loo', type=bool, default=False, help='cross sessions')
 parser.add_argument('--patience', type=int, default=30, help='Early Stop Tolerance')
 parser.add_argument('--model', type=str, default='SpikeCNN2D', help='Choose the model to train')
-parser.add_argument('--device', type=str, default='2', help='Choose GPU')
+parser.add_argument('--device', type=str, default='0', help='Choose GPU')
 parser.add_argument('--prep', type=str, default='/spike100', help='Choose form of spike data')
-# parser.add_argument('--neuron', type=str, default='PLIF', help='spike neuron')
 prms = vars(parser.parse_args())
 
 
@@ -41,7 +39,7 @@ inchannel_list = {0: 80, 1: 66}
 T_list = {'/spike': 12001, '/spike1': 500, '/spike2': 250, '/feature': 8,
           '/spike100': 100, '/spike150': 150, '/spike200': 200, '/spike50': 50
           }
-spiltratio = [0.2, 0.1, 0.7]  # 训练集：验证集：测试集
+spiltratio = [0.2, 0.1, 0.7]  
 
 ANN_dict = {'EEGNet': EEGNet, 'ShallowConvNet': ShallowConvNet, 'SVM': SVM, 'Conformer': Conformer,
             'DeepConvNet': DeepConvNet}
@@ -170,18 +168,17 @@ if __name__ == '__main__':
                 train_num = 0
                 num = 0
 
-                for frame, label in train_data_loader:  # tqdm可生成进度条
-                    frame = frame.cuda()  # [N, C, T] -> [N, 1, C, T] / [T, N, C]
+                for frame, label in train_data_loader:  
+                    frame = frame.cuda()  
                     label = label.reshape(-1).cuda()
                     out_fr = net(frame)  # N,num_classes
-                    # print(out_fr.shape, label.shape)
                     loss = loss_function(out_fr, label)
                     loss0 += loss
                     optimizer.zero_grad()
                     loss.backward()
                     optimizer.step()
                     accuracy += (out_fr.argmax(dim=1) == label.cuda()).float().sum().item()
-                    train_num += label.numel()  # .numel()返回数组中元素个数
+                    train_num += label.numel() 
                     num += 1
                     progress_bars[0].set_postfix(loss='%.4f' % loss, epoch=epoch, acc=accuracy / train_num,
                                                  session=session, num=trial_num)
@@ -201,14 +198,13 @@ if __name__ == '__main__':
 
                 with torch.no_grad():
                     for frame, label in validate_data_loader:
-                        frame = frame.cuda()  # [N, C, T] -> [N, 1, C, T] / [T, N, C]
+                        frame = frame.cuda()  
                         label = label.reshape(-1).cuda()
                         out_fr = net(frame)  # N,num_classes
-                        # print(out_fr.shape,label.shape)
                         loss = loss_function(out_fr, label)
                         loss0 += loss
                         val_accuracy += (out_fr.argmax(dim=1) == label.cuda()).float().sum().item()
-                        val_num += label.numel()  # .numel()返回数组中元素个数
+                        val_num += label.numel() 
                         num += 1
                         progress_bars[1].set_postfix(loss='%.4f' % loss, epoch=epoch, acc=val_accuracy / val_num,
                                                      session=session, num=trial_num)
@@ -237,11 +233,11 @@ if __name__ == '__main__':
             with torch.no_grad():
                 pbar2 = tqdm(test_data_loader, total=prms['epoch'], desc='Testing')
                 for frame, label in pbar2:
-                    frame = frame.cuda()  # [N, C, T] -> [N, 1, C, T] / [T, N, C]
+                    frame = frame.cuda() 
                     label = label.reshape(-1).cuda()
                     out_fr = net(frame)  # N,num_classes
                     test_acc += (out_fr.argmax(dim=1) == label).float().sum().item()
-                    test_num += label.numel()  # .numel()返回数组中元素个数
+                    test_num += label.numel() 
                     pbar2.set_postfix(loss='%.4f' % loss, acc=test_acc / test_num, session=session, num=trial_num)
                     functional.reset_net(net)
                 test_acc /= test_num
@@ -276,4 +272,3 @@ if __name__ == '__main__':
         f.write('每个trial的均值是：\n')
         np.savetxt(f, trial_mean, fmt='%.3f')
         f.write(f'实验结果是：\n{result_mean}')
-        # np.savetxt(f, result_mean, fmt='%.3f')
