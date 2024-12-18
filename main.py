@@ -41,12 +41,9 @@ T_list = {'/spike': 12001, '/spike1': 500, '/spike2': 250, '/feature': 8,
           }
 spiltratio = [0.2, 0.1, 0.7]  
 
-ANN_dict = {'EEGNet': EEGNet, 'ShallowConvNet': ShallowConvNet, 'SVM': SVM, 'Conformer': Conformer,
+ANN_dict = {'EEGNet': EEGNet, 'ShallowConvNet': ShallowConvNet, 'Conformer': Conformer,
             'DeepConvNet': DeepConvNet}
-SNN_dict = {'CUPY_SNN_PLIF': CUPY_SNN_PLIF, 'CUPY_SNN_PLIF_old': CUPY_SNN_PLIF_old, 'SpikeMLP': SpikeMLP,
-            'SpikeCNN': SpikeCNN, 'SpikeCNNR': SpikeCNNR, 'SpikeCNN_test':SpikeCNN_test,'SpikeCNN2D':SpikeCNN2D
-            ,'SpikeCNN2D_v2':SpikeCNN2D_v2,'SpikeCNN2D_pool':SpikeCNN2D_pool,'SpikeCNN2D_v3':SpikeCNN2D_v3
-            ,'SpikeCNN2D_eeg':SpikeCNN2D_eeg,'SpikeCNN1d_2d':SpikeCNN1d_2d,'SpikeCNN12datt':SpikeCNN12datt}
+SNN_dict = {'LSS_CA_SNN': LSS_CA_SNN,}
 
 
 
