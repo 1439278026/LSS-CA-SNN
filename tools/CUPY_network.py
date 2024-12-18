@@ -375,9 +375,9 @@ class ChannelWiseScaling(nn.Module):
     def forward(self, x):
         return x * self.scale.unsqueeze(0).unsqueeze(-1)
 
-class SpikeCNN1d_2d(nn.Module):
+class LSS_CA_SNN(nn.Module):
     def __init__(self, in_channels, out_num, w, surrogate_function, time_step, neuron='PLIF'):
-        super(SpikeCNN1d_2d, self).__init__()
+        super(LSS_CA_SNN, self).__init__()
         tau = math.exp(-w) + 1
         v_threshold = 1.0
         v_reset = -0.1
