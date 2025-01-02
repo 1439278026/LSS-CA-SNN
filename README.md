@@ -22,4 +22,4 @@ Numpy: 1.24.4
 Torch: 1.13.1  
 
 ## Acknowledgements
-This implementation has been based on [spikingjelly](https://github.com/fangwei123456/spikingjelly).
+This implementation has been based on [SpikingJelly](https://github.com/fangwei123456/spikingjelly).
