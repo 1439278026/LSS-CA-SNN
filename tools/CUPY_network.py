@@ -381,7 +381,7 @@ class LSS_CA_SNN(nn.Module):
         tau = math.exp(-w) + 1
         v_threshold = 1.0
         v_reset = -0.1
-        self.layer5_residual_pool = nn.AvgPool2d((1, 2))  # 对残差路径进行降维
+        self.layer5_residual_pool = nn.AvgPool2d((1, 2)) 
 
         self.layer1 = nn.Sequential(
             nn.Conv1d(in_channels, in_channels, kernel_size=(64,), padding=(32,), ),
@@ -398,7 +398,7 @@ class LSS_CA_SNN(nn.Module):
         )
         self.layer3 = nn.Sequential(
             nn.ZeroPad2d((32, 32, 0, 0)),
-            nn.Conv2d(32, 32, kernel_size=(1, 64), bias=False),  # 增加通道数到32
+            nn.Conv2d(32, 32, kernel_size=(1, 64), bias=False),
             nn.BatchNorm2d(32),
             nn.AvgPool2d((1, 2)),
             CUPYPLIFNode(init_tau=tau, surrogate_function=surrogate_function, v_threshold=v_threshold, v_reset=v_reset),
@@ -415,42 +415,27 @@ class LSS_CA_SNN(nn.Module):
 
 
     def forward(self, x):  # N, C, T
-        # print(x.shape)
         x = self.layer1(x)
-        # print(x.shape)
-        x = x.unsqueeze(1)
-        # x = self.layer2(x)
+        x = x.unsqueeze(1)  # N, C, T >  N, 1, C, T
         x = self.layer2(x)
-        # print(x.shape)
         x = self.layer3(x)
-        # print(x.shape)
         x4 = self.layer4(x)
-        # x5 = self.layer4(x4)
-        # print(x4.shape)
         x_residual = self.layer5_residual_pool(x)
         x5 = x4  + x_residual
-
         x55 = self.layer4(x5)
         x_residual = self.layer5_residual_pool(x5)
         x5 = x55 + x_residual
 
         x = x5.mean(-1).squeeze(-1)
-        # print(x.shape)
         x = self.drop(x)
         x = self.fc(x)
         return x
     def feature(self, x):  # N, C, T
-        # print(x.shape)
         x = self.layer1(x)
-        # print(x.shape)
         x = x.unsqueeze(1)
-        # x = self.layer2(x)
         x = self.layer2(x)
-        # print(x.shape)
         x = self.layer3(x)
-        # print(x.shape)
         x4 = self.layer4(x)
-        # x5 = self.layer4(x4)
         x_residual = self.layer5_residual_pool(x)  # 调整残差路径尺寸
         x5 = x4  + x_residual
 
