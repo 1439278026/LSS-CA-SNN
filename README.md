@@ -10,10 +10,11 @@ The following shows basic folder structure.
 ```
 ├── main.py # 
 ├── tools
-│   ├── CUPY_network.py # our LSS-CA-SNN and baseline model
+│   ├── model.py # our LSS-CA-SNN and baseline model
 │   ├── ...
 │   ├── ...
-│   └── auto_cuda # SNN training
+│   └── data.py # data augment
+└──spikingjelly # SNN training
 ```
 
 ## Environment
